@@ -25,21 +25,20 @@ final class CaptureAction
             $data[$key]['month'] = pq($span)->text();
             $data[$key]['days'] = array();
 
-            $day_aux = 0;
-            $ac = 0;
+            $totalDaysInMonth = date('t', strtotime(date('Y') . '-' . str_pad(($key + 1), 2, '0', STR_PAD_LEFT) . '-01'));
+
+            for($i = 1; $i <= $totalDaysInMonth; $i++)
+            {
+                $data[$key]['days'][] = array(
+                    'date' => date('Y') . '-' . str_pad(($key + 1), 2, '0', STR_PAD_LEFT) . '-' . str_pad($i, 2, '0', STR_PAD_LEFT),
+                    'itens' => ''
+                );
+            }
+
             foreach($doc['div.holidays-box-col2 div.row:eq(' . $key . ') .list-holiday-box'] as $i => $li)
             {
                 $day = (int) pq($li)->find('span.holiday-day')->text();
-
-                if($day_aux != $day)
-                {
-                    $day_aux = $day;
-                    $ac++;
-                }
-
-                $data[$key]['days'][($ac - 1)]['date'] = date('Y') . '-' . str_pad(($key + 1), 2, '0', STR_PAD_LEFT) . '-' . str_pad($day, 2, '0', STR_PAD_LEFT);
-                $data[$key]['days'][($ac - 1)]['itens'][] = pq($li)->find('.holiday-name')->text();
-
+                $data[$key]['days'][($day - 1)]['itens'][] = pq($li)->find('.holiday-name')->text();
             }
         }
 
